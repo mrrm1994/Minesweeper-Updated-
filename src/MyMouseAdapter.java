@@ -8,15 +8,18 @@ import javax.swing.JFrame;
 
 public class MyMouseAdapter extends MouseAdapter  {
 
-	int bombs[][] = new int[10][10];
-	public void bombLocations(){
-		RandomBombGenerator generate = new RandomBombGenerator(); 
+	int bombs[][] = new int[11][11];
+	RandomBombGenerator generate = new RandomBombGenerator();
+	boolean gameEnded = false;
+
+	public void bombLocations(){ 
 		generate.bombGenerator(bombs);
-		generate.showBombs(bombs);
+		generate.showBombsConsole(bombs);
 	}
 
 	public void mousePressed(MouseEvent e) {
 		switch (e.getButton()) {
+
 		case 1:		//Left mouse button
 			Component c = e.getComponent();
 			while (!(c instanceof JFrame)) {
@@ -106,17 +109,19 @@ public class MyMouseAdapter extends MouseAdapter  {
 						//Do nothing
 					} else {
 						//Released the mouse button on the same cell where it was pressed
-						if ((gridX == 0) || (gridY == 0)) {
+						if ((gridX == 0) || (gridY == 0)|| (gridX == 10) || (gridY == 10)) {
 							//On the left column and on the top row... do nothing
 						} else {
 							//On the grid other than on the left column and on the top row:					
 							if(bombs[myPanel.mouseDownGridX][myPanel.mouseDownGridY] == 1){
-								myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY] = Color.BLACK;
+								generate.showBombs(bombs, myPanel.colorArray, myPanel.mouseDownGridX, myPanel.mouseDownGridY);
 								myPanel.repaint();
-							}
+								gameEnded = true;
 
-							if(bombs[myPanel.mouseDownGridX][myPanel.mouseDownGridY] == 0){
-								myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY] = Color.LIGHT_GRAY;
+							}
+							else if(bombs[myPanel.mouseDownGridX][myPanel.mouseDownGridY] == 0){
+								ZoneScanner scanArea = new ZoneScanner();
+								scanArea.zoneIdentifier(bombs, myPanel.colorArray, myPanel.mouseDownGridX, myPanel.mouseDownGridY);
 								myPanel.repaint();
 							}
 
@@ -172,14 +177,12 @@ public class MyMouseAdapter extends MouseAdapter  {
 							if(myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY].equals(Color.WHITE)){
 
 								myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY] = Color.RED;
-								myPanel.repaint();
 							}
 							else {
 								if(myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY].equals(Color.RED)){
-									myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY] = Color.WHITE;
-									myPanel.repaint();
+									myPanel.colorArray[myPanel.mouseDownGridX][myPanel.mouseDownGridY] = Color.WHITE;	
 								}
-
+								myPanel.repaint();
 							}
 						}
 					}
@@ -190,6 +193,6 @@ public class MyMouseAdapter extends MouseAdapter  {
 		default:    //Some other button (2 = Middle mouse button, etc.)
 			//Do nothing
 			break;
-		}
+		}	
 	}
 }

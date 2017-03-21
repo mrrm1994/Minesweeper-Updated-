@@ -19,6 +19,7 @@ public class Main {
 		myFrame.addMouseListener(myMouseAdapter);
 
 		myMouseAdapter.bombLocations();
+
 		myFrame.setVisible(true);
 	}
 
